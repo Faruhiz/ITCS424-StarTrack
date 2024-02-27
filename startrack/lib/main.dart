@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:startrack/pages/loginPage.dart';
 import 'package:startrack/pages/newsEventPage.dart';
+import 'package:startrack/pages/registerPage.dart';
 
 void main() {
   runApp(const StarTrackApp());
@@ -20,6 +21,7 @@ class StarTrackApp extends StatelessWidget {
       routes: {
         '/': (context) => LoginPage(),
         '/newsEvent': (context) => const NewsEvents(),
+        '/register': (context) => RegisterForm(),
       },
     );
   }
