@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:startrack/pages/loginPage.dart';
 import 'package:startrack/pages/newsEventPage.dart';
 import 'package:startrack/pages/registerPage.dart';
+import 'package:startrack/pages/guides.dart';
+import 'package:startrack/pages/itemsData.dart';
 
-void main() {
-  runApp(const StarTrackApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences.setMockInitialValues({});
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  runApp(StarTrackApp(
+    token: pref.getString('token'),
+  ));
 }
 
 class StarTrackApp extends StatelessWidget {
-  const StarTrackApp({Key? key}) : super(key: key);
+  final token;
+  const StarTrackApp({required this.token, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +27,15 @@ class StarTrackApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: (token != null && !JwtDecoder.isExpired(token) == false)
+          ? '/news'
+          : '/login',
       routes: {
-        '/': (context) => LoginPage(),
-        '/newsEvent': (context) => const NewsEvents(),
+        '/login': (context) => LoginPage(),
+        '/news': (context) => NewsEvents(),
         '/register': (context) => RegisterForm(),
+        '/guides': (context) => TipsAndTricksScreen(),
+        '/database': (context) => ItemsData(),
       },
     );
   }

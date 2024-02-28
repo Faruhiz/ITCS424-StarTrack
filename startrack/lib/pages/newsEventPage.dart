@@ -1,23 +1,30 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, file_names
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, file_names, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:startrack/structModel/newsEvent.dart';
 import 'dart:convert';
 
-void main() {
-  runApp(MaterialApp(home: NewsEvents()));
-}
+var parser = EmojiParser();
 
 class NewsEvents extends StatefulWidget {
-  const NewsEvents({super.key});
-
   @override
-  State<NewsEvents> createState() => _NewsEventsState();
+  _NewsEventsState createState() => _NewsEventsState();
 }
 
 class _NewsEventsState extends State<NewsEvents> {
   late List<NewsEvent> _newsData = [];
+
+  List<String> _routes = [
+    '/news',
+    '/guides',
+    '/database',
+  ];
+
+  void _onItemTapped(int index) {
+    Navigator.pushNamed(context, _routes[index]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,96 +32,133 @@ class _NewsEventsState extends State<NewsEvents> {
         textDirection: TextDirection.ltr,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Honkai: Star Rail News & Events'),
-            backgroundColor: Color(0xFF3366FF),
+            title: Text('News & Events'),
+            backgroundColor: Color.fromARGB(255, 197, 198, 202),
           ),
-          body: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: FutureBuilder<List<NewsEvent>>(
-              future: getEventsData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data == null) {
-                  return Text('No news events available.');
-                } else {
-                  return ListView.builder(
-                    itemCount: _newsData.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        elevation: 4.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        color: Color(0xFFEFEFEF),
-                        child: ExpansionTile(
-                          title: Text(
-                            snapshot.data![index].title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                          children: <Widget>[
-                            Container(
-                              alignment: Alignment.topLeft,
-                              padding: EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Details:',
-                                    textDirection: TextDirection.ltr,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0,
-                                      color: Color(0xFF333333),
-                                    ),
+          body: Column(
+            children: [
+              // Events Section
+              Expanded(
+                child: Container(
+                  color: Color.fromARGB(255, 57, 52, 56),
+                  padding: EdgeInsets.all(16.0),
+                  child: FutureBuilder<List<NewsEvent>>(
+                    future: getEventsData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Error: ${snapshot.error}'),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data == null) {
+                        return Center(
+                          child: Text('No news events available.'),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              elevation: 4.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              color: Color(0xFFEFEFEF),
+                              child: ExpansionTile(
+                                title: Text(
+                                  parser.emojify(snapshot.data![index].title),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF333333),
                                   ),
-                                  // SizedBox(height: 8.0),
-                                  Text(
-                                    snapshot.data![index].description,
-                                    // textDirection: TextDirection.ltr,
-                                    style: TextStyle(
-                                      color: Color(0xFF333333),
+                                ),
+                                children: <Widget>[
+                                  Container(
+                                    alignment: Alignment.topLeft,
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Details:',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.0,
+                                            color: Color(0xFF333333),
+                                          ),
+                                        ),
+                                        Text(
+                                          parser.emojify(snapshot
+                                              .data![index].description),
+                                          style: TextStyle(
+                                            color: Color(0xFF333333),
+                                          ),
+                                        ),
+                                        Image(
+                                          image: NetworkImage(
+                                              snapshot.data![index].banner),
+                                          height: 400,
+                                          width: 400,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Image(
-                                    image: NetworkImage(
-                                        snapshot.data![index].banner),
-                                    height: 400,
-                                    width: 400,
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
+                            );
+                          },
+                        );
+                      }
                     },
-                  );
-                }
-              },
-            ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          backgroundColor: Color.fromRGBO(57, 52, 55, 100),
+          bottomNavigationBar: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.book),
+                  label: 'Guides',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.archive),
+                  label: 'Database',
+                ),
+                // Add more BottomNavigationBarItems as needed
+              ],
+              selectedItemColor:
+                  Colors.blue, // Customize the selected item color
+              onTap: _onItemTapped),
         ));
   }
 
   Future<List<NewsEvent>> getEventsData() async {
-    final res =
-        await http.get(Uri.parse('https://api.ennead.cc/starrail/news/events'));
-    var data = jsonDecode(res.body.toString());
+    final res = await http.get(
+        Uri.parse('https://api.ennead.cc/starrail/news/events'),
+        headers: {'Accept-Charset': 'utf-8'});
+    var resBody = utf8.decode(res.bodyBytes);
+    var data = jsonDecode(resBody);
 
     if (res.statusCode == 200) {
-      for (Map<String, dynamic> i in data) {
-        _newsData.add(NewsEvent.fromJson(i));
+      for (Map<String, dynamic> event in data) {
+        _newsData.add(NewsEvent.fromJson(event));
       }
-      return _newsData;
+      return _newsData
+          .where((event) =>
+              DateTime.now().millisecondsSinceEpoch ~/ 1000 < event.endAt)
+          .toList();
     } else {
       throw Exception('Failed to load album');
     }
