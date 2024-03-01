@@ -6,22 +6,7 @@ class APIError extends Error {
    */
   constructor(message, code, http) {
     super(message)
-    /**
-     * The name of this error.
-     */
-    __publicField(this, "name")
-    /**
-     * The message associated with this error.
-     */
-    __publicField(this, "message")
-    /**
-     * The HTTP object
-     */
-    __publicField(this, "http")
-    /**
-     * The error code
-     */
-    __publicField(this, "code")
+
     this.name = this.constructor.name
     this.message = message
     this.code = code

@@ -81,6 +81,9 @@ class Cookie {
     })
     return cookies.join("; ")
   }
+
 }
+
+
 
 module.exports = Cookie

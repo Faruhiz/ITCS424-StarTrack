@@ -1,10 +1,33 @@
 const https = require("https")
 const zlib = require("zlib")
 const crypto = require("crypto")
-const cache = require("./cache/cache.js")
+const { Cache } = require("./cache/cache.js")
 const error  = require("./error/APIError.js")
 const { generateDS, delay } = require('./helper.js')
 const { parseLang } = require('./lang/lang.js')
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 
 class HttpRequest {
     constructor(cookie) {
@@ -47,10 +70,46 @@ class HttpRequest {
          */
         __publicField(this, "retries", 1)
         __publicField(this, "http")
+
+        // this.headers = {
+        //   Accept: "application/json, text/plain, */*",
+        //   "Content-Type": "application/json",
+        //   "Accept-Encoding": "gzip, deflate, br",
+        //   "sec-ch-ua": '"Chromium"v="112", "Microsoft Edge"v="112", "Not:A-Brand"v="99"',
+        //   "sec-ch-ua-mobile": "?0",
+        //   "sec-ch-ua-platform": '"Windows"',
+        //   "sec-fetch-dest": "empty",
+        //   "sec-fetch-mode": "cors",
+        //   "sec-fetch-site": "same-site",
+        //   "user-agent": "Mozilla/5.0 (Windows NT 10.0 Win64 x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.46",
+        //   "x-rpc-app_version": "1.5.0",
+        //   "x-rpc-client_type": "5",
+        //   "x-rpc-language": "en-us"
+        // }
+
+        // this.params = {}
+        // this.body = {}
+        // this.ds = false
+        // this.retries = 1
+        // this.cache
+        // this.http = null;
+
         if (cookie)
-          this.headers.Cookie = cookie
-        this.cache = new cache.Cache()
+          this.headers.cookie = cookie
+        this.cache = new Cache()
       }
+  
+  setHeaders(headers) {
+    this.headers = { ...this.headers }
+    return this
+  }
+
+  setCache(cache) {
+    this.cache = cache
+    return this
+  }
+
+  
 
     /**
    * Sets search parameters or query parameter.
@@ -90,7 +149,7 @@ class HttpRequest {
    * @returns {this}
    */
   setLang(lang) {
-    this.headers["x-rpc-language"] = parseLang(lang)
+    this.headers["x-rpc-language"] = 'en-us' // parseLang(lang)
     return this
   }
   /**

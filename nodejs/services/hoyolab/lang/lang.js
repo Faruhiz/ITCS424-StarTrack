@@ -9,13 +9,13 @@ class Language {
    */
   static parseLang(lang) {
     if (!lang) {
-      return langEnum.LanguageEnum.ENGLISH;
+      return langEnum.langEnum.ENGLISH;
     }
-    const langKeys = Object.keys(langEnum.LanguageEnum);
+    const langKeys = Object.keys(langEnum.langEnum);
     const matchingKey = langKeys.find(
-      (key) => langEnum.LanguageEnum[key] === lang
+      (key) => langEnum.langEnum[key] === lang
     );
-    return matchingKey ? langEnum.LanguageEnum[matchingKey] : langEnum.LanguageEnum.ENGLISH;
+    return matchingKey ? langEnum.langEnum[matchingKey] : langEnum.langEnum.ENGLISH;
   }
 }
 
