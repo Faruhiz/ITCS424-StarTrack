@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:startrack/structModel/newsEvent.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 var parser = EmojiParser();
@@ -15,6 +16,7 @@ class NewsEvents extends StatefulWidget {
 
 class _NewsEventsState extends State<NewsEvents> {
   late List<NewsEvent> _newsData = [];
+  late SharedPreferences prefs;
 
   List<String> _routes = [
     '/news',
@@ -24,6 +26,17 @@ class _NewsEventsState extends State<NewsEvents> {
 
   void _onItemTapped(int index) {
     Navigator.pushNamed(context, _routes[index]);
+    print(prefs.getString('email'));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initPrefs();
+  }
+
+  void _initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   @override

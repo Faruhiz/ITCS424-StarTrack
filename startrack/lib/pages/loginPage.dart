@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -13,7 +15,10 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
   bool _isNotValidate = false;
+  String _error = '';
+
   late SharedPreferences prefs;
 
   @override
@@ -27,11 +32,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginUser() async {
-    if (_emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
+    if (_passwordController.text.isNotEmpty &&
         _usernameController.text.isNotEmpty) {
       var reqBody = {
-        "email": _emailController.text,
         "username": _usernameController.text,
         "password": _passwordController.text
       };
@@ -43,12 +46,13 @@ class _LoginPageState extends State<LoginPage> {
       var jsonResponse = jsonDecode(response.body);
       if (jsonResponse['status']) {
         var myToken = jsonResponse['token'];
-        var email = jsonResponse['email'];
         prefs.setString('token', myToken);
-        print(prefs.getString('email'));
         Navigator.pushNamed(context, '/news');
       } else {
-        print('Something went wrong');
+        setState(() {
+          _error = jsonResponse['error'];
+          _isNotValidate = true;
+        });
       }
     }
   }
@@ -113,28 +117,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter your email';
-                            }
-
-                            if (!RegExp(
-                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                            ).hasMatch(value)) {
-                              return 'Please enter a valid email';
-                            }
-
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20.0),
-                        TextFormField(
                           controller: _passwordController,
                           decoration: InputDecoration(
                             labelText: 'Password',
@@ -154,6 +136,16 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: loginUser,
                           child: Text('Login'),
                         ),
+                        SizedBox(height: 10.0),
+                        if (_isNotValidate)
+                          Text(
+                            _error,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16.0,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () {

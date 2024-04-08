@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, library_private_types_in_public_api, use_key_in_widget_constructors
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, library_private_types_in_public_api, use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +21,7 @@ class _RegisterFormState extends State<RegisterForm> {
   TextEditingController _uidController = TextEditingController();
 
   bool _isNotValidate = false;
+  String _error = '';
 
   void registerUser() async {
     if (_emailController.text.isNotEmpty &&
@@ -52,7 +53,9 @@ class _RegisterFormState extends State<RegisterForm> {
           MaterialPageRoute(builder: (context) => LoginPage()),
         );
       } else {
-        print("Something went wrong");
+        setState(() {
+          _error = res['error'];
+        });
       }
     } else {
       setState(() {
@@ -120,6 +123,7 @@ class _RegisterFormState extends State<RegisterForm> {
                             return null;
                           },
                         ),
+                        SizedBox(height: 20.0),
                         TextFormField(
                           controller: _cookieController,
                           decoration: InputDecoration(
@@ -222,6 +226,11 @@ class _RegisterFormState extends State<RegisterForm> {
                           },
                           child: Text('Register'),
                         ),
+                        SizedBox(height: 10.0),
+                        if (_error.isNotEmpty)
+                          Text(_error,
+                              style: TextStyle(color: Colors.red),
+                              textAlign: TextAlign.center),
                         SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () {

@@ -22,7 +22,7 @@ class ItemsData extends StatelessWidget {
     Product(
         name: "Hertarium",
         description:
-            "The cryptocurrency circulating internally in the Herta Space Station. Can be used to purchase goods in Special Stores.",
+            "The cryptocurrency circulating internally in the Herta Space Station.",
         rarity: "Epic",
         image: "Hertareum.webp"),
     Product(
@@ -41,6 +41,52 @@ class ItemsData extends StatelessWidget {
         description: "Legendary Sword",
         rarity: "Exotic",
         image: "sword.webp"),
+    Product(
+        name: "Self-Modeling Resin",
+        description: "Rare material used to custom-make Relics.",
+        rarity: "Exotic",
+        image: "Self-Modeling_Resin.webp"),
+    Product(
+        name: "A tuskpir wrap bought for Bailu",
+        description:
+            "A cake roll that is too cute to eat. Name from the beautiful texture",
+        rarity: "Rare",
+        image: "Item_Tuskpir_Wrap.webp"),
+    Product(
+        name: "If i can stop one heart from breaking",
+        description: "A record that can be played on the Express' phonograph.",
+        rarity: "Rare",
+        image: "Item_Phonograph_Record.jpg"),
+    Product(
+        name: "Express Supply Pass",
+        description:
+            "Provisions prepared by the Express for Trailblazers. Claim with pass.",
+        rarity: "Epic",
+        image: "Daily_Express_Supply_Pass.webp"),
+    Product(
+        name: "Trailblaze Power",
+        description:
+            "The Imaginary power residing in the engines of the Astral Express",
+        rarity: "Epic",
+        image: "Item_Trailblaze_Power.webp"),
+    Product(
+        name: "Allseer",
+        description:
+            "Digital stickers that can be used to decorate the pages of the Dreamtour Handbook.",
+        rarity: "Epic",
+        image: "Dreamscape_Pass_Sticker_Allseer.webp"),
+    Product(
+        name: "Ancient Coin",
+        description:
+            "An old coin from a time when metal was still a plentiful resource in Belobog.",
+        rarity: "Rare",
+        image: "Item_Ancient_Coin.webp"),
+    Product(
+        name: "Auspicious XV",
+        description:
+            "A new generation flagship jade abacus, its off-white material feels exquisite to the touch.",
+        rarity: "Rare",
+        image: "Item_Auspicious_XV.webp"),
   ];
 
   @override
@@ -48,7 +94,7 @@ class ItemsData extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Items"),
-        backgroundColor: Color.fromARGB(255, 2, 250, 230),
+        backgroundColor: const Color.fromARGB(255, 197, 198, 202),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -145,8 +191,20 @@ class MySearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         var result = matchQuery[index];
         return ListTile(
-          title: Text(result.name),
-          // You can add onTap functionality here if needed
+          title: Text(
+            result.name,
+            style: const TextStyle(
+                color: Colors.white), // Change text color to white
+          ),
+          onTap: () {
+            // Navigate to the item information page and pass the selected product
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ItemInformationPage(product: result),
+              ),
+            );
+          },
         );
       },
     );
@@ -179,7 +237,7 @@ class ProductBox extends StatelessWidget {
         backgroundColor = Colors.green;
         break;
       case "exotic":
-        backgroundColor = Colors.yellow;
+        backgroundColor = const Color.fromARGB(255, 216, 188, 61);
         break;
       case "rare":
         backgroundColor = Colors.blue;
@@ -191,15 +249,20 @@ class ProductBox extends StatelessWidget {
         backgroundColor = Colors.white;
     }
 
+    // Reduce the description text
+    final truncatedDescription = description.length > 50
+        ? '${description.substring(0, 30)}...'
+        : description;
+
     return Container(
       padding: const EdgeInsets.all(2),
       height: 120,
-      color: const Color.fromARGB(255, 247, 4, 93),
+      color: const Color.fromARGB(255, 57, 52, 56),
       child: Card(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Image.asset("assets/images/$image"),
+            Image.asset("assets/appimages/${image}"),
             Expanded(
               child: Container(
                 color: backgroundColor,
@@ -208,9 +271,14 @@ class ProductBox extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text(name,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text(description),
-                    Text("Rarity: $rarity"),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white)),
+                    Text(truncatedDescription,
+                        style: const TextStyle(color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2), // Change text color to white
+                    Text("Rarity: $rarity",
+                        style: const TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -239,11 +307,46 @@ class ItemInformationPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset("assets/images/${product.image}"),
+            ClipRRect(
+              borderRadius:
+                  BorderRadius.circular(10), // Add border radius if desired
+              child: Image.asset("assets/appimages/${product.image}"),
+            ),
             const SizedBox(height: 16),
-            Text("Description: ${product.description}"),
-            const SizedBox(height: 8),
-            Text("Rarity: ${product.rarity}"),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white, // Change box cover color here if needed
+                borderRadius:
+                    BorderRadius.circular(10), // Add border radius if desired
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Description \n ",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)), // Change text color to black
+                  const SizedBox(height: 8),
+                  Text(" ${product.description} \n",
+                      style: const TextStyle(color: Colors.black)),
+                  Text("Rarity\n ",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)), // Change text color to black
+                  Text(" ${product.rarity}",
+                      style: const TextStyle(color: Colors.black)),
+                ],
+              ),
+            ),
           ],
         ),
       ),
