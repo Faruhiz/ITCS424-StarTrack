@@ -13,6 +13,7 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
+
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -27,7 +28,9 @@ class _RegisterFormState extends State<RegisterForm> {
     if (_emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
         _usernameController.text.isNotEmpty &&
-        _confirmPasswordController.text.isNotEmpty) {
+        _confirmPasswordController.text.isNotEmpty &&
+        _uidController.text.isNotEmpty &&
+        _cookieController.text.isNotEmpty) {
       if (_passwordController.text != _confirmPasswordController.text) {
         // Show error if passwords do not match
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -39,8 +42,11 @@ class _RegisterFormState extends State<RegisterForm> {
       var reqBody = {
         "email": _emailController.text,
         "username": _usernameController.text,
-        "password": _passwordController.text
+        "password": _passwordController.text,
+        "uid": _uidController.text,
+        "cookie": _cookieController.text,
       };
+
       var response = await http.post(
         Uri.parse('http://34.87.22.134:3000/register'),
         headers: {"Content-Type": "application/json"},

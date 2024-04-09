@@ -7,8 +7,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-          scaffoldBackgroundColor: Color.fromARGB(217, 180, 206, 233)),
+      theme:
+          ThemeData(scaffoldBackgroundColor: Color.fromARGB(255, 57, 52, 56)),
       home: ItemsData(),
     );
   }
@@ -262,7 +262,7 @@ class ProductBox extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Image.asset("assets/appimages/${image}"),
+            Image.asset("assets/images/${image}"),
             Expanded(
               child: Container(
                 color: backgroundColor,
@@ -310,7 +310,7 @@ class ItemInformationPage extends StatelessWidget {
             ClipRRect(
               borderRadius:
                   BorderRadius.circular(10), // Add border radius if desired
-              child: Image.asset("assets/appimages/${product.image}"),
+              child: Image.asset("assets/images/${product.image}"),
             ),
             const SizedBox(height: 16),
             Container(

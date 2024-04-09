@@ -45,8 +45,12 @@ class _LoginPageState extends State<LoginPage> {
       );
       var jsonResponse = jsonDecode(response.body);
       if (jsonResponse['status']) {
-        var myToken = jsonResponse['token'];
-        prefs.setString('token', myToken);
+        var token = jsonResponse['token'];
+        var uid = jsonResponse['uid'];
+        // Save token and uid to SharedPreferences
+
+        prefs.setString('token', token);
+        prefs.setString('uid', uid);
         Navigator.pushNamed(context, '/news');
       } else {
         setState(() {

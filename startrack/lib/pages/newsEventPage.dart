@@ -22,6 +22,8 @@ class _NewsEventsState extends State<NewsEvents> {
     '/news',
     '/guides',
     '/database',
+    '/user',
+    '/calculator'
   ];
 
   void _onItemTapped(int index) {
@@ -136,6 +138,7 @@ class _NewsEventsState extends State<NewsEvents> {
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
@@ -149,8 +152,15 @@ class _NewsEventsState extends State<NewsEvents> {
                   icon: Icon(Icons.archive),
                   label: 'Database',
                 ),
-                // Add more BottomNavigationBarItems as needed
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.calculate), label: 'Calculator'),
               ],
+              showUnselectedLabels: true,
+              unselectedItemColor: Colors.grey,
               selectedItemColor:
                   Colors.blue, // Customize the selected item color
               onTap: _onItemTapped),

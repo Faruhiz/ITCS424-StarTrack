@@ -42,6 +42,7 @@ dependencies:
   flutter_emoji: "2.5.1"
   jwt_decoder: ^2.0.1
   shared_preferences: ^2.2.2
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:
