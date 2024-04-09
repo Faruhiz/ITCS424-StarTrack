@@ -20,8 +20,21 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Jades Calculator'),
-        backgroundColor: const Color.fromARGB(255, 197, 198, 202),
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout), // Logout icon
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
+      backgroundColor: const Color.fromARGB(255, 57, 52, 56),
       body: Center(
         child: Container(
           width: screenSize.width * 0.7,
@@ -125,7 +138,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     int calculatedGems = (daysDifference * 60); // base gems per day
 
     if (isMonthlyPaid) {
-      calculatedGems += daysDifference * 20; // additional gems per day
+      calculatedGems += daysDifference * 90; // additional gems per day
     }
 
     // Calculate additional weekly gems
@@ -140,7 +153,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     int additionalWeeklyGems = 0;
     DateTime tempDate = nextMonday;
     while (tempDate.isBefore(selectedDateWithoutTime)) {
-      additionalWeeklyGems += 165;
+      additionalWeeklyGems += 0;
       tempDate = tempDate.add(Duration(days: 7));
     }
 

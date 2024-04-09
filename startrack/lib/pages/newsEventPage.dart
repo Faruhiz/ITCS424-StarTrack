@@ -28,7 +28,6 @@ class _NewsEventsState extends State<NewsEvents> {
 
   void _onItemTapped(int index) {
     Navigator.pushNamed(context, _routes[index]);
-    print(prefs.getString('email'));
   }
 
   @override
@@ -48,7 +47,19 @@ class _NewsEventsState extends State<NewsEvents> {
         child: Scaffold(
           appBar: AppBar(
             title: Text('News & Events'),
-            backgroundColor: Color.fromARGB(255, 197, 198, 202),
+            backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout), // Logout icon
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (route) => false,
+                  );
+                },
+              ),
+            ],
           ),
           body: Column(
             children: [

@@ -7,8 +7,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme:
-          ThemeData(scaffoldBackgroundColor: Color.fromARGB(255, 57, 52, 56)),
+      theme: ThemeData(backgroundColor: const Color.fromARGB(255, 57, 52, 56)),
       home: ItemsData(),
     );
   }
@@ -94,7 +93,7 @@ class ItemsData extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Items"),
-        backgroundColor: const Color.fromARGB(255, 197, 198, 202),
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -186,27 +185,30 @@ class MySearchDelegate extends SearchDelegate {
   }
 
   Widget buildResultListView(List<Product> matchQuery) {
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(
-            result.name,
-            style: const TextStyle(
-                color: Colors.white), // Change text color to white
-          ),
-          onTap: () {
-            // Navigate to the item information page and pass the selected product
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ItemInformationPage(product: result),
-              ),
-            );
-          },
-        );
-      },
+    return Container(
+      color: const Color.fromARGB(255, 57, 52, 56),
+      child: ListView.builder(
+        itemCount: matchQuery.length,
+        itemBuilder: (context, index) {
+          var result = matchQuery[index];
+          return ListTile(
+            title: Text(
+              result.name,
+              style: const TextStyle(
+                  color: Colors.white), // Change text color to white
+            ),
+            onTap: () {
+              // Navigate to the item information page and pass the selected product
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ItemInformationPage(product: result),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -302,6 +304,7 @@ class ItemInformationPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(product.name),
       ),
+      backgroundColor: const Color.fromARGB(255, 57, 52, 56),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
