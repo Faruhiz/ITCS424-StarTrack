@@ -1,8 +1,12 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:startrack/pages/calculatorPage.dart';
 import 'package:startrack/pages/loginPage.dart';
 import 'package:startrack/pages/newsEventPage.dart';
+import 'package:startrack/pages/profilePage.dart';
 import 'package:startrack/pages/registerPage.dart';
 import 'package:startrack/pages/guides.dart';
 import 'package:startrack/pages/itemsData.dart';
@@ -36,6 +40,8 @@ class StarTrackApp extends StatelessWidget {
         '/register': (context) => RegisterForm(),
         '/guides': (context) => TipsAndTricksScreen(),
         '/database': (context) => ItemsData(),
+        '/user': (context) => UserInfoPage(),
+        '/calculator': (context) => CalculatorPage()
       },
     );
   }

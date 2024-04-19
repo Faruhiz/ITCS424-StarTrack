@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:startrack/structModel/newsEvent.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 var parser = EmojiParser();
@@ -15,15 +16,28 @@ class NewsEvents extends StatefulWidget {
 
 class _NewsEventsState extends State<NewsEvents> {
   late List<NewsEvent> _newsData = [];
+  late SharedPreferences prefs;
 
   List<String> _routes = [
     '/news',
     '/guides',
     '/database',
+    '/user',
+    '/calculator'
   ];
 
   void _onItemTapped(int index) {
     Navigator.pushNamed(context, _routes[index]);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initPrefs();
+  }
+
+  void _initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   @override
@@ -33,7 +47,19 @@ class _NewsEventsState extends State<NewsEvents> {
         child: Scaffold(
           appBar: AppBar(
             title: Text('News & Events'),
-            backgroundColor: Color.fromARGB(255, 197, 198, 202),
+            backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout), // Logout icon
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (route) => false,
+                  );
+                },
+              ),
+            ],
           ),
           body: Column(
             children: [
@@ -123,6 +149,7 @@ class _NewsEventsState extends State<NewsEvents> {
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
@@ -136,8 +163,15 @@ class _NewsEventsState extends State<NewsEvents> {
                   icon: Icon(Icons.archive),
                   label: 'Database',
                 ),
-                // Add more BottomNavigationBarItems as needed
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.calculate), label: 'Calculator'),
               ],
+              showUnselectedLabels: true,
+              unselectedItemColor: Colors.grey,
               selectedItemColor:
                   Colors.blue, // Customize the selected item color
               onTap: _onItemTapped),

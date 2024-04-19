@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, library_private_types_in_public_api, use_key_in_widget_constructors, avoid_unnecessary_containers, avoid_print, slash_for_doc_comments, file_names, prefer_final_fields, use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +15,10 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
   bool _isNotValidate = false;
+  String _error = '';
+
   late SharedPreferences prefs;
 
   @override
@@ -29,144 +32,140 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginUser() async {
-    if (_emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
+    if (_passwordController.text.isNotEmpty &&
         _usernameController.text.isNotEmpty) {
       var reqBody = {
-        "email": _emailController.text,
         "username": _usernameController.text,
         "password": _passwordController.text
       };
-      var response = await http.post(Uri.parse('http://127.0.0.1:3000/login'),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(reqBody));
+      var response = await http.post(
+        Uri.parse('http://34.87.22.134:3000/login'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody),
+      );
       var jsonResponse = jsonDecode(response.body);
       if (jsonResponse['status']) {
-        var myToken = jsonResponse['token'];
-        prefs.setString('token', myToken);
+        var token = jsonResponse['token'];
+        var uid = jsonResponse['uid'];
+        // Save token and uid to SharedPreferences
+
+        prefs.setString('token', token);
+        prefs.setString('uid', uid);
         Navigator.pushNamed(context, '/news');
       } else {
-        print('Something went wrong');
+        setState(() {
+          _error = jsonResponse['error'];
+          _isNotValidate = true;
+        });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor:
-            Color.fromARGB(255, 57, 52, 56), // Change the background color here
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(
-                height: 250.0, // Adjust the height of the image container
-                child: Center(
-                  child: Image.asset(
-                    'assets/images/sr_logo.png',
-                    height: 400.0,
-                    width: 450.0,
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: Color.fromARGB(255, 57, 52, 56),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                SizedBox(
+                  height: orientation == Orientation.portrait ? 250.0 : 150.0,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/sr_logo.png',
+                      height:
+                          orientation == Orientation.portrait ? 400.0 : 200.0,
+                      width:
+                          orientation == Orientation.portrait ? 450.0 : 300.0,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(300, 20, 300, 20),
-                child: Form(
-                  key: _fromKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      SizedBox(height: 20.0),
-                      Center(
-                        child: Text('StarTrack',
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Form(
+                    key: _fromKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        SizedBox(height: 20.0),
+                        Center(
+                          child: Text(
+                            'StarTrack',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 40.0,
-                                color: Color.fromARGB(255, 229, 207, 163))),
-                      ),
-                      SizedBox(height: 20.0),
-                      TextFormField(
-                        controller: _usernameController,
-                        decoration: InputDecoration(
-                          labelText: 'Username',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 12.0),
-                          filled: true,
-                          fillColor: Colors
-                              .white, // Change the background color of the input box here
+                              fontWeight: FontWeight.bold,
+                              fontSize: orientation == Orientation.portrait
+                                  ? 40.0
+                                  : 30.0,
+                              color: Color.fromARGB(255, 229, 207, 163),
+                            ),
+                          ),
                         ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your username';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20.0),
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 12.0),
-                          filled: true,
-                          fillColor: Colors
-                              .white, // Change the background color of the input box here
+                        SizedBox(height: 20.0),
+                        TextFormField(
+                          controller: _usernameController,
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your username';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your email';
-                          }
-
-                          if (!RegExp(
-                            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                          ).hasMatch(value)) {
-                            return 'Please enter a valid email';
-                          }
-
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20.0),
-                      TextFormField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 12.0),
-                          filled: true,
-                          fillColor: Colors
-                              .white, // Change the background color of the input box here
+                        SizedBox(height: 20.0),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
                         ),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          loginUser();
-                        },
-                        child: Text('Login'),
-                      ),
-                      SizedBox(height: 20.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/register');
-                        },
-                        child: Text('Don\'t have an account? Register here'),
-                      ),
-                    ],
+                        SizedBox(height: 20.0),
+                        ElevatedButton(
+                          onPressed: loginUser,
+                          child: Text('Login'),
+                        ),
+                        SizedBox(height: 10.0),
+                        if (_isNotValidate)
+                          Text(
+                            _error,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16.0,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        SizedBox(height: 20.0),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          child: Text('Don\'t have an account? Register here'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ));
+        );
+      },
+    );
   }
 }
